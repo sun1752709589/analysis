@@ -15,4 +15,5 @@ group :development do
   gem 'pry-nav'
   gem 'web-console', '~> 2.0'
   gem 'spring'
+  gem 'awesome_print'
 end

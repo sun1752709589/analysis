@@ -1,12 +1,16 @@
 class VaneUFOReport
-
+  # usage:VaneUFOReport.execute('2015-12-01', '2015-12-30', 40465)
+  # 得到每次开灯时长
   def self.get_by_hash(start_time, end_time, device_ip)
     hash = {}
-    data = Bulb.where({device_ip: device_ip, created_at: Date.parse(start_time)..Date.parse(end_time), op_code: 'Ri', care_word: 'f'})
+    data = Bulb.where({device_ip: device_ip, created_at: Date.parse(start_time)..Date.parse(end_time), op_code: 'Ri', care_word: 'f'}).order("created_at")
     data.each do |item|
       next if item.created_at.nil?
-      off = Bulb.where({device_ip: device_ip, op_code: 'Ri', care_word: '0'}).where("created_at >= '#{item.created_at}'").first
-      hash[item.created_at.to_s[0...19]] = off.created_at.to_i - item.created_at.to_i
+      off = Bulb.where({device_ip: device_ip, op_code: 'Ri', care_word: '0'}).where("created_at >= '#{item.created_at}'").order("created_at").first
+      next if off.nil?
+      if (off.created_at.to_i - item.created_at.to_i) < 600
+        hash[item.created_at.to_s[0...19]] = off.created_at.to_i - item.created_at.to_i
+      end
     end
     hash
   end
@@ -17,9 +21,15 @@ class VaneUFOReport
       fetch(item, device_ip)
     end
     hash = get_by_hash(start_time, end_time, device_ip)
-    binding.pry
+    everyday_lighting_hour = per_day_lighting_hour(hash)
+    everyday_lighting_hour_second = per_day_lighting_hour(hash, true)
+    everyday_lighting_on = per_day_lighting_on(hash)
+    everyhour_lighting_hour = per_hour_lighting_hour(hash)
+    everyhour_lighting_on = per_hour_lighting_on(hash)
+binding.pry
   end
 
+  # 找到所有符合要求的日志文件
   def self.find_files(start_time, end_time)
     return [] if start_time.nil? || end_time.nil?
     start_date = Date.parse(start_time)
@@ -33,6 +43,7 @@ class VaneUFOReport
     files
   end
 
+  # 将数据分析后存入数据库
   def self.fetch(file_path, device_ip)
     IO.foreach(file_path) do |line|
       begin
@@ -52,4 +63,55 @@ class VaneUFOReport
       end
     end
   end
+
+  # 每天照明时长
+  def self.per_day_lighting_hour(hash, second = false)
+    result = {}
+    hash.each do |k, v|
+      result[k[0..9]] = 0 if result[k[0..9]].nil?
+      result[k[0..9]] += v.to_i
+    end
+    unless second
+      result.each do |k, v|
+        result[k] = Tool.second2hour(v)
+      end
+    end
+    result
+  end
+
+  # 每天开启次数
+  def self.per_day_lighting_on(hash)
+    result = {}
+    hash.each do |k, v|
+      result[k[0..9]] = 0 if result[k[0..9]].nil?
+      result[k[0..9]] += 1
+    end
+    result
+  end
+
+  # 每小时照明时长
+  def self.per_hour_lighting_hour(hash, second = false)
+    result = {}
+    hash.each do |k, v|
+      result[k[0..12]] = 0 if result[k[0..12]].nil?
+      result[k[0..12]] += v.to_i
+    end
+    if second
+      result.each do |k, v|
+        result[k] = Tool.second2hour(v)
+      end
+    end
+    result
+  end
+
+  # 每小时开启次数
+  def self.per_hour_lighting_on(hash)
+    result = {}
+    hash.each do |k, v|
+      result[k[0..12]] = 0 if result[k[0..12]].nil?
+      result[k[0..12]] += 1
+    end
+    result
+  end
+
 end
