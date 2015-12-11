@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151207094313) do
+ActiveRecord::Schema.define(version: 20151211053137) do
 
   create_table "bulbs", force: :cascade do |t|
     t.integer  "device_ip",   limit: 4
@@ -24,5 +24,13 @@ ActiveRecord::Schema.define(version: 20151207094313) do
   end
 
   add_index "bulbs", ["created_at"], name: "index_bulbs_on_created_at", using: :btree
+
+  create_table "vanke_device_house_tables", force: :cascade do |t|
+    t.integer  "device_id",   limit: 4
+    t.string   "device_type", limit: 255
+    t.integer  "house_id",    limit: 4
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
 
 end
