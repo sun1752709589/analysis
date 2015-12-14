@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151211053137) do
+ActiveRecord::Schema.define(version: 20151214035905) do
 
   create_table "bulbs", force: :cascade do |t|
     t.integer  "device_ip",   limit: 4
@@ -29,6 +29,18 @@ ActiveRecord::Schema.define(version: 20151211053137) do
     t.integer  "device_id",   limit: 4
     t.string   "device_type", limit: 255
     t.integer  "house_id",    limit: 4
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  create_table "vanke_device_usages", force: :cascade do |t|
+    t.integer  "device_id",   limit: 4
+    t.integer  "device_ip",   limit: 4
+    t.string   "device_type", limit: 255
+    t.string   "method",      limit: 255
+    t.string   "operation",   limit: 255
+    t.string   "request_url", limit: 255
+    t.string   "mobile_type", limit: 255
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
   end

@@ -16,7 +16,7 @@ class VaneUFOReport
   end
 
   def self.execute(start_time, end_time, device_ip)
-    logs = find_files(start_time, end_time)
+    logs = Tool.find_files("/Users/phantom/temp/vakan_ufo_report", "receive.log.*", start_time, end_time)
     logs.each do |item|
       fetch(item, device_ip)
     end
@@ -27,20 +27,6 @@ class VaneUFOReport
     everyhour_lighting_hour = per_hour_lighting_hour(hash)
     everyhour_lighting_on = per_hour_lighting_on(hash)
 binding.pry
-  end
-
-  # 找到所有符合要求的日志文件
-  def self.find_files(start_time, end_time)
-    return [] if start_time.nil? || end_time.nil?
-    start_date = Date.parse(start_time)
-    end_date = Date.parse(end_time)
-    files = []
-    Dir.glob("/Users/phantom/temp/vakan_ufo_report/receive.log.*").each do |item|
-      date_str = item.split('/')[-1].split('.')[-1]
-      date_time = Date.parse(date_str)
-      files << item if date_time >= start_date && date_time <= end_date
-    end
-    files
   end
 
   # 将数据分析后存入数据库
