@@ -7,6 +7,13 @@ class VankeDeviceUsage < ActiveRecord::Base
       IO.foreach(file_path) do |line|
         begin
           binding.pry
+          time = /\[.*\]/.match(line)[0][1...-1].sub(/:/, " ").to_datetime
+          device_id = /bulbs\/\d+/.match(line)[0].split('/')[1]
+          device_type = 'heater'
+          method = /.{4,5}\/api/.match(line)[0].split(' ')[0]
+          operation = /bulbs\/\d+.*\.json/.match(line)[0].split('/')[-1].split('.')[0]
+          request_url = /\/api.*\.json/.match(line)[0]
+          mobile_type = /\(.*\)/.match(line)[0][1...-1]
 
         rescue
           next
