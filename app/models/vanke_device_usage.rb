@@ -1,10 +1,28 @@
 class VankeDeviceUsage < ActiveRecord::Base
 
+  # 门禁使用-by day
+  def self.door_accesses_usage_by_day(start_time, end_time)
+    door_open = {}
+    door_share = {}
+    records = VankeDeviceUsage.where(created_at: Date.parse(start_time)..Date.parse(end_time)).where(device_type: 'dooraccesses')
+    records.each do |item|
+      tmp = item.created_at.to_s[0..9]
+      if 'open' == item.operation
+        door_open[tmp] = 0 if door_open[tmp].nil?
+        door_open[tmp] += 1
+      elsif 'create_share_url' == item.operation
+        door_share[tmp] = 0 if door_share[tmp].nil?
+        door_share[tmp] += 1
+      end
+    end
+    [door_open.sort.to_h, door_share.sort.to_h]
+  end
+
   # 热水器使用房间数-by day
-  def self.heater_usage_by_day(start_time, end_time)
+  def self.device_usage_by_day(device_type, start_time, end_time)
     result = {}
     # vanke_heater_ids = VankeDeviceHouseTable.where("device_type='bulb'").map(&:device_id)
-    records = VankeDeviceUsage.where(created_at: Date.parse(start_time)..Date.parse(end_time)).where(device_type: 'heater')
+    records = VankeDeviceUsage.where(created_at: Date.parse(start_time)..Date.parse(end_time)).where(device_type: device_type)
     records.each do |item|
       tmp = item.created_at.to_s[0..9]
       result[tmp] = [] if result[tmp].nil?
@@ -15,10 +33,10 @@ class VankeDeviceUsage < ActiveRecord::Base
   end
 
   # 热水器使用概览
-  def self.heater_usage_overview(start_time, end_time)
+  def self.device_usage_overview(device_type, start_time, end_time)
     result = {}
-    vanke_heater_ids = VankeDeviceHouseTable.where("device_type='bulb'").map(&:device_id)
-    records = VankeDeviceUsage.where(created_at: Date.parse(start_time)..Date.parse(end_time)).where(device_type: 'heater')
+    vanke_heater_ids = VankeDeviceHouseTable.where("device_type='#{device_type}'").map(&:device_id)
+    records = VankeDeviceUsage.where(created_at: Date.parse(start_time)..Date.parse(end_time)).where(device_type: device_type)
     records.each do |item|
       result[item.device_id] = [] if result[item.device_id].nil?
       tmp = item.created_at.to_s[0..9]
