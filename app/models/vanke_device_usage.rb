@@ -1,5 +1,25 @@
 class VankeDeviceUsage < ActiveRecord::Base
 
+  # 热水器-空调-by hour
+  def self.device_usage_by_hour(device_type, start_time, end_time)
+    work_day = {}
+    weekend = {}
+    records = VankeDeviceUsage.where(created_at: Date.parse(start_time)..Date.parse(end_time)).where(device_type: device_type)
+    records.each do |item|
+      week = item.created_at.wday
+      hour = item.created_at.hour
+      if [0,6].include?(week)
+        weekend[hour] = [] if weekend[hour].nil?
+        weekend[hour] << item.device_id unless weekend[hour].include?(item.device_id)
+      else
+        work_day[hour] = [] if work_day[hour].nil?
+        work_day[hour] << item.device_id unless work_day[hour].include?(item.device_id)
+      end
+    end
+    work_day.each{|k,v| work_day[k]=v.size}
+    weekend.each{|k,v| weekend[k]=v.size}
+    [work_day.sort.to_h,weekend.sort.to_h]
+  end
   # 门禁使用-by day
   def self.door_accesses_usage_by_day(start_time, end_time)
     door_open = {}
