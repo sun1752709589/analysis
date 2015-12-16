@@ -1,5 +1,5 @@
 class VankeDeviceUsage < ActiveRecord::Base
-  # zgrep switch_o access.log.1.gz >> vanke_heater.log.2015-12-14
+  # zgrep switch_o access.log.[1-5].gz >> vanke_heater.log.2015-12-14
   # VankeDeviceUsage.fetch_heater_data('2015-12-01', '2015-12-30')
   def self.fetch_heater_data(start_time, end_time, vanke_only = true)
     vanke_heater_ids = VankeDeviceHouseTable.where("device_type='bulb'").map(&:device_id)
@@ -24,7 +24,7 @@ class VankeDeviceUsage < ActiveRecord::Base
       end
     end
   end
-  # zgrep vanke_eco_towers access.log.1.gz >> vanke_ecotower.log.2015-12-08
+  # zgrep vanke_eco_towers access.log.[1-5].gz >> vanke_ecotower.log.2015-12-08
   # VankeDeviceUsage.fetch_ecotower_data('2015-12-01', '2015-12-30')
   def self.fetch_ecotower_data(start_time, end_time, vanke_only = true)
     vanke_ecotower_ids = VankeDeviceHouseTable.where("device_type='ecotower'").map(&:device_id)
@@ -49,7 +49,7 @@ class VankeDeviceUsage < ActiveRecord::Base
       end
     end
   end
-  # zgrep door_accesses access.log.1.gz >> vanke_dooraccesses.log.2015-12-09
+  # zgrep door_accesses access.log.[1-5].gz >> vanke_dooraccesses.log.2015-12-09
   # VankeDeviceUsage.fetch_dooraccesses_data('2015-12-01', '2015-12-30')
   def self.fetch_dooraccesses_data(start_time, end_time, vanke_only = true)
     vanke_dooraccesses_ids = VankeDeviceHouseTable.where("device_type='dooraccesses'").map(&:device_id)

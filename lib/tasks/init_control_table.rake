@@ -8,7 +8,7 @@ namespace :data do
       device_type = file_path.split('_')[1]
       IO.foreach(file_path) do |line|
         tmp = line.split(' ')
-        VankeDeviceHouseTable.create({device_id: tmp[0], device_type: device_type, house_id: tmp[1]})
+        VankeDeviceHouseTable.create({device_id: tmp[1], device_type: device_type, house_id: tmp[0]})
       end
     end
     puts "---init success---"
