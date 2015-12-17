@@ -20,6 +20,24 @@ class VankeDeviceUsage < ActiveRecord::Base
     weekend.each{|k,v| weekend[k]=v.size}
     [work_day.sort.to_h,weekend.sort.to_h]
   end
+
+  # 门禁使用-by hour
+  def self.door_accesses_usage_by_hour(start_time, end_time)
+    door_open = {}
+    door_share = {}
+    records = VankeDeviceUsage.where(created_at: Date.parse(start_time)..Date.parse(end_time)).where(device_type: 'dooraccesses')
+    records.each do |item|
+      tmp = item.created_at.hour
+      if 'open' == item.operation
+        door_open[tmp] = 0 if door_open[tmp].nil?
+        door_open[tmp] += 1
+      elsif 'create_share_url' == item.operation
+        door_share[tmp] = 0 if door_share[tmp].nil?
+        door_share[tmp] += 1
+      end
+    end
+    [door_open.sort.to_h, door_share.sort.to_h]
+  end
   # 门禁使用-by day
   def self.door_accesses_usage_by_day(start_time, end_time)
     door_open = {}
@@ -71,11 +89,13 @@ class VankeDeviceUsage < ActiveRecord::Base
   # zgrep switch_o access.log.[1-5].gz >> vanke_heater.log.2015-12-14
   # VankeDeviceUsage.fetch_heater_data('2015-12-01', '2015-12-30')
   def self.fetch_heater_data(start_time, end_time, vanke_only = true)
-    vanke_heater_ids = VankeDeviceHouseTable.where("device_type='bulb'").map(&:device_id)
+    vanke_heater_ids = VankeDeviceHouseTable.where("device_type='heater'").map(&:device_id)
     files = Tool.find_files("/Users/phantom/temp/vakan_ufo_report", "vanke_heater.log.*", start_time, end_time)
+    error_count = 0
     files.each do |file_path|
       IO.foreach(file_path) do |line|
         begin
+          next if line.size < 10 || line.include?('/api/api_v1')
           time = /\[.*\]/.match(line)[0][1...-1].sub(/:/, " ").to_datetime
           device_id = /bulbs\/\d+/.match(line)[0].split('/')[1]
           next if vanke_only && !vanke_heater_ids.include?(device_id.to_i)
@@ -83,24 +103,29 @@ class VankeDeviceUsage < ActiveRecord::Base
           method = /.{4,5}\/api/.match(line)[0].split(' ')[0]
           operation = /bulbs\/\d+.*\.json/.match(line)[0].split('/')[-1].split('.')[0]
           request_url = /\/api.*\.json/.match(line)[0]
-          # mobile_type = /\(.*\)/.match(line)[0][1...-1]
+          binding.pry
+          mobile_type = /"-".*/.match(line)[0][5..-2]
           VankeDeviceUsage.find_or_create_by({device_id: device_id, device_type: device_type,
-            method: method, operation: operation, request_url: request_url, created_at: time
+            method: method, operation: operation, request_url: request_url, created_at: time, mobile_type: mobile_type
             })
         rescue
+          error_count += 1
           next
         end
       end
     end
+    "总错误数:#{error_count}"
   end
   # zgrep vanke_eco_towers access.log.[1-5].gz >> vanke_ecotower.log.2015-12-08
   # VankeDeviceUsage.fetch_ecotower_data('2015-12-01', '2015-12-30')
   def self.fetch_ecotower_data(start_time, end_time, vanke_only = true)
     vanke_ecotower_ids = VankeDeviceHouseTable.where("device_type='ecotower'").map(&:device_id)
     files = Tool.find_files("/Users/phantom/temp/vakan_ufo_report", "vanke_ecotower.log.*", start_time, end_time)
+    error_count = 0
     files.each do |file_path|
       IO.foreach(file_path) do |line|
         begin
+          next if line.size < 10 || line.include?('/api/api_v1')
           time = /\[.*\]/.match(line)[0][1...-1].sub(/:/, " ").to_datetime
           device_id = /vanke_eco_towers\/\d+/.match(line)[0].split('/')[1]
           next if vanke_only && !vanke_ecotower_ids.include?(device_id.to_i)
@@ -108,24 +133,28 @@ class VankeDeviceUsage < ActiveRecord::Base
           method = /.{4,5}\/api/.match(line)[0].split(' ')[0]
           # operation = /bulbs\/\d+.*\.json/.match(line)[0].split('/')[-1].split('.')[0]
           request_url = /\/api.*\.json/.match(line)[0]
-          # mobile_type = /\(.*\)/.match(line)[0][1...-1]
+          mobile_type = /"-".*/.match(line)[0][5..-2]
           VankeDeviceUsage.find_or_create_by({device_id: device_id, device_type: device_type,
-            method: method, request_url: request_url, created_at: time
+            method: method, request_url: request_url, created_at: time, mobile_type: mobile_type
             })
         rescue
+          error_count += 1
           next
         end
       end
     end
+    "总错误数:#{error_count}"
   end
   # zgrep door_accesses access.log.[1-5].gz >> vanke_dooraccesses.log.2015-12-09
   # VankeDeviceUsage.fetch_dooraccesses_data('2015-12-01', '2015-12-30')
   def self.fetch_dooraccesses_data(start_time, end_time, vanke_only = true)
     vanke_dooraccesses_ids = VankeDeviceHouseTable.where("device_type='dooraccesses'").map(&:device_id)
     files = Tool.find_files("/Users/phantom/temp/vakan_ufo_report", "vanke_dooraccesses.log.*", start_time, end_time)
+    error_count = 0
     files.each do |file_path|
       IO.foreach(file_path) do |line|
         begin
+          next if line.size < 10 || line.include?('/api/api_v1')
           time = /\[.*\]/.match(line)[0][1...-1].sub(/:/, " ").to_datetime
           device_id = /door_accesses\/\d+/.match(line)[0].split('/')[1]
           # next if vanke_only && !vanke_dooraccesses_ids.include?(device_id.to_i)
@@ -133,14 +162,16 @@ class VankeDeviceUsage < ActiveRecord::Base
           method = /.{4,5}?\/api/.match(line)[0].split(' ')[0].sub(/"/, "")
           operation = /door_accesses\/\d+.*\.json/.match(line)[0].split('/')[-1].split('.')[0]
           request_url = /\/api.*\.json/.match(line)[0]
-          # mobile_type = /\(.*\)/.match(line)[0][1...-1]
+          mobile_type = /"-".*/.match(line)[0][5..-2]
           VankeDeviceUsage.find_or_create_by({device_id: device_id, device_type: device_type,
-            method: method, request_url: request_url, operation: operation, created_at: time
+            method: method, request_url: request_url, operation: operation, created_at: time, mobile_type: mobile_type
             })
-        rescue
+        rescue Exception => e
+          error_count += 1
           next
         end
       end
     end
+    "总错误数:#{error_count}"
   end
 end
