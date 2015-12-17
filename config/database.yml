@@ -8,5 +8,6 @@ default: &default
 
 development:
   <<: *default
-  database: analysis
+  # database: analysis
+  database: phantom_2015_11_13
 
