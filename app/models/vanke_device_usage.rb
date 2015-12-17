@@ -1,5 +1,23 @@
 class VankeDeviceUsage < ActiveRecord::Base
 
+  # app控制和墙面开关控制热水器
+  def self.device_usage_through_app_switch(device_type, start_time, end_time)
+    app = {}
+    switch = {}
+    records = VankeDeviceUsage.where(created_at: Date.parse(start_time)..Date.parse(end_time)).where(device_type: device_type)
+    records.each do |item|
+      tmp = item.created_at.to_s[0..9]
+      if item.mobile_type.include?('Android') || item.mobile_type.include?('iPhone')
+        app[tmp] = 0 if app[tmp].nil?
+        app[tmp] += 1
+      else
+        switch[tmp] = 0 if switch[tmp].nil?
+        switch[tmp] += 1
+      end
+    end
+    [app.sort.to_h, switch.sort.to_h]
+  end
+
   # 热水器-空调-by hour
   def self.device_usage_by_hour(device_type, start_time, end_time)
     work_day = {}
