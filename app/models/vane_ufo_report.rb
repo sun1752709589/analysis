@@ -1,3 +1,4 @@
+# grep -h 40465 receive.log.2015-12-*  >> ./sun_usage_log/vanke_ufo_report.log.2015-12-21
 class VaneUFOReport
   # usage:VaneUFOReport.execute('2015-12-01', '2015-12-30', 40465)
   # 得到每次开灯时长
@@ -16,7 +17,7 @@ class VaneUFOReport
   end
 
   def self.execute(start_time, end_time, device_ip)
-    logs = Tool.find_files("/Users/phantom/temp/vakan_ufo_report", "receive.log.*", start_time, end_time)
+    logs = Tool.find_files("/Users/phantom/temp/vakan_ufo_report/receive_log", "vanke_ufo_report.log.*", start_time, end_time)
     logs.each do |item|
       fetch(item, device_ip)
     end
