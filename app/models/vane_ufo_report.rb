@@ -17,19 +17,64 @@ class VaneUFOReport
   end
 
   def self.execute(start_time, end_time, device_ip)
-    logs = Tool.find_files("/Users/phantom/temp/vakan_ufo_report/receive_log", "vanke_ufo_report.log.*", start_time, end_time)
-    logs.each do |item|
-      fetch(item, device_ip)
-    end
+    # logs = Tool.find_files("/Users/phantom/temp/vakan_ufo_report/receive_log", "vanke_ufo_report.log.*", start_time, end_time)
+    # logs.each do |item|
+    #   fetch(item, device_ip)
+    # end
     hash = get_by_hash(start_time, end_time, device_ip)
+    draw_chart(hash)
+  end
+  # 画图表
+  def self.draw_chart(hash)
     everyday_lighting_hour = per_day_lighting_hour(hash)
     everyday_lighting_hour_second = per_day_lighting_hour(hash, true)
     everyday_lighting_on = per_day_lighting_on(hash)
     everyhour_lighting_hour = per_hour_lighting_hour(hash)
     everyhour_lighting_on = per_hour_lighting_on(hash)
-binding.pry
+    p = Axlsx::Package.new
+    wb = p.workbook
+    # ---
+    # 每日累计照明时间
+    wb.add_worksheet(:name => "每日累计照明时间") do |sheet|
+      sheet.add_row ["日期","总时长"]
+      everyday_lighting_hour.each do |k,v|
+        sheet.add_row [k,v]
+      end
+      avg = (everyday_lighting_hour.values.map(&:to_f).sum/everyday_lighting_hour.size).round(2)
+      sheet.add_row ["均值","#{avg}小时"]
+    end
+    # 每日开启次数&每次平均照明时长
+    wb.add_worksheet(:name => "每日开启次数&每次平均照明时长") do |sheet|
+      sheet.add_row ["日期","开启次数","每次平均时长"]
+      everyday_lighting_hour_second.each do |k,v|
+        sheet.add_row [k,everyday_lighting_on[k].to_s + "次",(v/everyday_lighting_on[k]).round(0).to_s + "秒"]
+      end
+      avg = (everyday_lighting_hour.values.map(&:to_f).sum/everyday_lighting_hour.size).round(2)
+      sheet.add_row ["均值","#{(everyday_lighting_on.values.sum/everyday_lighting_on.size).round(0)}次","#{(everyday_lighting_hour_second.values.sum/everyday_lighting_on.values.sum).round(0)}秒"]
+    end
+    # 每日累计照明时长-by hour
+    wb.add_worksheet(:name => "每日累计照明时长-by hour") do |sheet|
+      tmp = ""
+      everyhour_lighting_hour.each do |k,v|
+        if k[0..9] != tmp
+          sheet.add_row ["日期","小时","照明时长","开启次数"]
+          tmp = k[0..9]
+        end
+        sheet.add_row [k[0..9],k[11..12],Tool.second2hour(v),everyhour_lighting_on[k]]
+      end
+    end
+    # 照明时长最长的10次明细信息
+    wb.add_worksheet(:name => "照明时长最长的10次明细信息") do |sheet|
+      top10 = hash.sort_by{ |k,v| v }.reverse.first(10)
+      sheet.add_row ["日期","星期","开启时间","照明时长"]
+      top10.each do |item|
+        sheet.add_row [item[0][0..9],Tool.num2week(Date.parse(item[0]).wday),item[0][11..19],Tool.second2hour(item[1])]
+      end
+    end
+    # ---
+    p.use_shared_strings = true
+    p.serialize('chart.xlsx')
   end
-
   # 将数据分析后存入数据库
   def self.fetch(file_path, device_ip)
     IO.foreach(file_path) do |line|
