@@ -11,6 +11,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'commander'
 gem 'json'
 gem 'axlsx'
+gem "chartkick"
 group :development do
   gem 'pry'
   gem 'pry-nav'
