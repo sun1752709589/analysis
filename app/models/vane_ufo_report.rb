@@ -40,7 +40,7 @@ class VaneUFOReport
       everyday_lighting_hour.each do |k,v|
         sheet.add_row [k,v]
       end
-      avg = (everyday_lighting_hour.values.map(&:to_f).sum/everyday_lighting_hour.size).round(2)
+      avg = (Tool.second2hour(everyday_lighting_hour_second.values.sum).to_f/everyday_lighting_hour.size).round(2)
       sheet.add_row ["均值","#{avg}小时"]
     end
     # 每日开启次数&每次平均照明时长
@@ -89,6 +89,8 @@ class VaneUFOReport
         op_code = msg_arr[2]
         instruction = msg_arr[3]
         care_word = msg_arr[3].try(:[], 4)
+        last_care_word = Bulb.last.try(:care_word) || '0'
+        next if care_word == last_care_word || care_word.nil?
         unless Bulb.where({device_ip: device_ip, created_at: created_at, op_code: op_code}).first
           Bulb.create({device_ip: device_ip, op_code: op_code, instruction: instruction, care_word: care_word, message: message, created_at: created_at})
         end
