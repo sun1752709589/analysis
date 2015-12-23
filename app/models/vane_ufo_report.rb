@@ -17,12 +17,13 @@ class VaneUFOReport
   end
 
   def self.execute(start_time, end_time, device_ip)
-    logs = Tool.find_files("/Users/phantom/temp/vakan_ufo_report/receive_log", "vanke_ufo_report.log.*", start_time, end_time)
-    logs.each do |item|
-      fetch(item, device_ip)
-    end
+    # logs = Tool.find_files("/Users/phantom/temp/vakan_ufo_report/receive_log", "vanke_ufo_report.log.*", start_time, end_time)
+    # logs.each do |item|
+    #   fetch(item, device_ip)
+    # end
     hash = get_by_hash(start_time, end_time, device_ip)
-    draw_chart(hash)
+    # draw_chart(hash)
+    hash
   end
   # 画图表
   def self.draw_chart(hash)
