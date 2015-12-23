@@ -80,6 +80,7 @@ class VaneUFOReport
   # 将数据分析后存入数据库
   def self.fetch(file_path, device_ip)
     error_count = 0
+    count = 0
     IO.foreach(file_path) do |line|
       begin
         data = JSON.parse(line)
@@ -90,10 +91,15 @@ class VaneUFOReport
         op_code = msg_arr[2]
         instruction = msg_arr[3]
         care_word = msg_arr[3].try(:[], 4)
-        last_care_word = Bulb.last.try(:care_word) || '0'
+        if count == 0
+          last_care_word = '0'
+        else
+          last_care_word = Bulb.last.try(:care_word) || '0'
+        end
         next if care_word == last_care_word || care_word.nil?
         unless Bulb.where({device_ip: device_ip, created_at: created_at, op_code: op_code}).first
           Bulb.create({device_ip: device_ip, op_code: op_code, instruction: instruction, care_word: care_word, message: message, created_at: created_at})
+          count += 1
         end
       rescue
         error_count += 1
