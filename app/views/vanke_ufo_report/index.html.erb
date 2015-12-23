@@ -1,1 +1,59 @@
+<center>
+  <h2>西安万科vv公寓4楼公共区域灯的调控日志(device_ip为40465的Ri信息)</h2>
+  <h2>报告涵盖时间段:2015-12-01~2015-12-20日</h2>
+</center>
+<h2>每天累计照明时间</h2>
 <%= column_chart get_everyday_lighting_hour_data%>
+<h2>每天累计开启次数和每次平均照明时长</h2>
+<table class="table table-striped table-nonfluid">
+  <tr>
+    <td>日期</td>
+    <td>星期?</td>
+    <td>开启次数</td>
+    <td>每次开启平均照明时长</td>
+  </tr>
+  <%
+    @everyday_lighting_on.each do |k,v|
+  %>
+  <tr>
+    <td><%=k%></td>
+    <td><%=Tool.num2week(Date.parse(k).wday)%></td>
+    <td><%=v%>次</td>
+    <td><%=(@everyday_lighting_hour_second[k]/v).round(0)%>秒</td>
+  </tr>
+  <%end%>
+  <tr>
+    <td>均值</td>
+    <td>---</td>
+    <td><%="#{(@everyday_lighting_on.values.sum/@everyday_lighting_on.size).round(0)}次"%></td>
+    <td><%="#{(@everyday_lighting_hour_second.values.sum/@everyday_lighting_on.values.sum).round(0)}秒"%></td>
+  </tr>
+</table>
+<h2>每天累计照明时长-by hour</h2>
+<%@everyday_lighting_on.each do |k,v|%>
+  <%= column_chart get_everyday_hour_linghing_hour(k)%>
+<%end%>
+<h2>每天累计开启次数-by hour</h2>
+<%@everyday_lighting_on.each do |k,v|%>
+  <%= column_chart get_everyday_hour_linghing_on(k)%>
+<%end%>
+<h2>照明时间最长的20次明细信息</h2>
+<table class="table table-striped table-nonfluid">
+  <tr>
+    <td>日期</td>
+    <td>星期?</td>
+    <td>开启时间</td>
+    <td>此次开启照明时长</td>
+  </tr>
+  <%top10 = @hash.sort_by{ |k,v| v }.reverse.first(20)%>
+  <%
+    top10.each do |k,v|
+  %>
+  <tr>
+    <td><%=k[0..9]%></td>
+    <td><%=Tool.num2week(Date.parse(k).wday)%></td>
+    <td><%=k[11..19]%></td>
+    <td><%=Tool.second2hour(v)%></td>
+  </tr>
+  <%end%>
+</table>
