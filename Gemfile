@@ -12,6 +12,7 @@ gem 'commander'
 gem 'json'
 gem 'axlsx'
 gem "chartkick"
+gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
 group :development do
   gem 'pry'
   gem 'pry-nav'
