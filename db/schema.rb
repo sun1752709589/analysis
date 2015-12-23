@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151218035059) do
+ActiveRecord::Schema.define(version: 20151222075809) do
 
   create_table "bulbs", force: :cascade do |t|
     t.integer  "device_ip",   limit: 4
@@ -24,6 +24,15 @@ ActiveRecord::Schema.define(version: 20151218035059) do
   end
 
   add_index "bulbs", ["created_at"], name: "index_bulbs_on_created_at", using: :btree
+
+  create_table "error_counts", force: :cascade do |t|
+    t.string   "error_type",  limit: 255
+    t.integer  "error_count", limit: 4
+    t.string   "file_path",   limit: 255
+    t.string   "key_word",    limit: 255
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
 
   create_table "router_offlines", force: :cascade do |t|
     t.integer  "device_ip",  limit: 4

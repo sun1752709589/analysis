@@ -17,10 +17,10 @@ class VaneUFOReport
   end
 
   def self.execute(start_time, end_time, device_ip)
-    # logs = Tool.find_files("/Users/phantom/temp/vakan_ufo_report/receive_log", "vanke_ufo_report.log.*", start_time, end_time)
-    # logs.each do |item|
-    #   fetch(item, device_ip)
-    # end
+    logs = Tool.find_files("/Users/phantom/temp/vakan_ufo_report/receive_log", "vanke_ufo_report.log.*", start_time, end_time)
+    logs.each do |item|
+      fetch(item, device_ip)
+    end
     hash = get_by_hash(start_time, end_time, device_ip)
     draw_chart(hash)
   end
@@ -74,9 +74,11 @@ class VaneUFOReport
     # ---
     p.use_shared_strings = true
     p.serialize('chart.xlsx')
+    binding.pry
   end
   # 将数据分析后存入数据库
   def self.fetch(file_path, device_ip)
+    error_count = 0
     IO.foreach(file_path) do |line|
       begin
         data = JSON.parse(line)
@@ -91,9 +93,12 @@ class VaneUFOReport
           Bulb.create({device_ip: device_ip, op_code: op_code, instruction: instruction, care_word: care_word, message: message, created_at: created_at})
         end
       rescue
+        error_count += 1
         next
       end
     end
+    puts "总错误数:#{error_count}"
+    ErrorCount.create({error_type: 'error',error_count: error_count,file_path: file_path,key_word: device_ip,created_at: Time.now})
   end
 
   # 每天照明时长
