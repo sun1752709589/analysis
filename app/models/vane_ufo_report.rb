@@ -87,6 +87,7 @@ class VaneUFOReport
         message = data['message']
         next if !message.include?("#{device_ip},Ri")
         created_at = DateTime.iso8601(data['timestamp'])
+        created_at=created_at.change(:offset => "+0800")
         msg_arr = message.split(',')
         op_code = msg_arr[2]
         instruction = msg_arr[3]
