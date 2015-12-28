@@ -18,4 +18,8 @@ end
 # send rb to router
 di = DeviceInfo.find_by_device_ip 2258
 cmd = Command.new :rb
-NodeServer.send_cmd!(2258,cmd)
+
+(1..10).each do |i|
+  NodeServer.send_cmd!(2258,cmd)
+  sleep 10
+end
