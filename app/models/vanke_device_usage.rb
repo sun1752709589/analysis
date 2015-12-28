@@ -54,6 +54,11 @@ class VankeDeviceUsage < ActiveRecord::Base
         door_share[tmp] += 1
       end
     end
+    (0..23).each do |i|
+      door_open[i] = 0 if door_open[i].nil?
+      door_share[i] = 0 if door_share[i].nil?
+    end
+    # binding.pry
     [door_open.sort.to_h, door_share.sort.to_h]
   end
   # 门禁使用-by day
@@ -121,7 +126,6 @@ class VankeDeviceUsage < ActiveRecord::Base
           method = /.{4,5}\/api/.match(line)[0].split(' ')[0]
           operation = /bulbs\/\d+.*\.json/.match(line)[0].split('/')[-1].split('.')[0]
           request_url = /\/api.*\.json/.match(line)[0]
-          binding.pry
           mobile_type = /"-".*/.match(line)[0][5..-2]
           VankeDeviceUsage.find_or_create_by({device_id: device_id, device_type: device_type,
             method: method, operation: operation, request_url: request_url, created_at: time, mobile_type: mobile_type
@@ -132,6 +136,8 @@ class VankeDeviceUsage < ActiveRecord::Base
         end
       end
     end
+    puts "总错误数:#{error_count}"
+    ErrorCount.create({error_type: 'error',error_count: error_count,file_path: nil,key_word: 'heater',created_at: Time.now})
     "总错误数:#{error_count}"
   end
   # zgrep vanke_eco_towers access.log.[1-5].gz >> vanke_ecotower.log.2015-12-08
@@ -161,6 +167,8 @@ class VankeDeviceUsage < ActiveRecord::Base
         end
       end
     end
+    puts "总错误数:#{error_count}"
+    ErrorCount.create({error_type: 'error',error_count: error_count,file_path: nil,key_word: 'ecotower',created_at: Time.now})
     "总错误数:#{error_count}"
   end
   # zgrep door_accesses access.log.[1-5].gz >> vanke_dooraccesses.log.2015-12-09
@@ -190,6 +198,8 @@ class VankeDeviceUsage < ActiveRecord::Base
         end
       end
     end
+    puts "总错误数:#{error_count}"
+    ErrorCount.create({error_type: 'error',error_count: error_count,file_path: nil,key_word: 'dooraccesses',created_at: Time.now})
     "总错误数:#{error_count}"
   end
 end
