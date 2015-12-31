@@ -55,3 +55,13 @@
   {name: "开门", data: @door_accesses_usage_by_hour[0]},
   {name: "分享权限", data: @door_accesses_usage_by_hour[1]}
 ] %>
+<h2>热水器使用情况详情-按小时</h2>
+<%= line_chart [
+  {name: "工作日", data: @heater_usage_by_hour[0]},
+  {name: "周末", data: @heater_usage_by_hour[1]}
+] %>
+<h2>空调使用情况详情-按小时</h2>
+<%= line_chart [
+  {name: "工作日", data: @ecotower_usage_by_hour[0]},
+  {name: "周末", data: @ecotower_usage_by_hour[1]}
+] %>

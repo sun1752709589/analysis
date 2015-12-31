@@ -36,7 +36,7 @@ class VankeDeviceUsage < ActiveRecord::Base
     end
     work_day.each{|k,v| work_day[k]=v.size}
     weekend.each{|k,v| weekend[k]=v.size}
-    [work_day.sort.to_h,weekend.sort.to_h]
+    [work_day.sort_by{|k,v| k.to_i}.to_h,weekend.sort_by{|k,v| k.to_i}.to_h]
   end
 
   # 门禁使用-by hour
@@ -45,7 +45,7 @@ class VankeDeviceUsage < ActiveRecord::Base
     door_share = {}
     records = VankeDeviceUsage.where(created_at: Date.parse(start_time)..Date.parse(end_time)).where(device_type: 'dooraccesses')
     records.each do |item|
-      tmp = item.created_at.hour
+      tmp = item.created_at.hour#.to_s + "时"
       if 'open' == item.operation
         door_open[tmp] = 0 if door_open[tmp].nil?
         door_open[tmp] += 1
@@ -55,11 +55,12 @@ class VankeDeviceUsage < ActiveRecord::Base
       end
     end
     (0..23).each do |i|
+      # i = i.to_s + "时"
       door_open[i] = 0 if door_open[i].nil?
       door_share[i] = 0 if door_share[i].nil?
     end
     # binding.pry
-    [door_open.sort.to_h, door_share.sort.to_h]
+    [door_open.sort_by{|k,v| k.to_i}.to_h, door_share.sort_by{|k,v| k.to_i}.to_h]
   end
   # 门禁使用-by day
   def self.door_accesses_usage_by_day(start_time, end_time)
