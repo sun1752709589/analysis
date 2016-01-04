@@ -49,19 +49,19 @@
 <%= line_chart [
   {name: "开门", data: @door_accesses_usage_by_day[0]},
   {name: "分享权限", data: @door_accesses_usage_by_day[1]}
-] %>
+], discrete: true %>
 <h2>门禁使用情况详情-按小时</h2>
 <%= line_chart [
   {name: "开门", data: @door_accesses_usage_by_hour[0]},
   {name: "分享权限", data: @door_accesses_usage_by_hour[1]}
-] %>
+], discrete: true %>
 <h2>热水器使用情况详情-按小时</h2>
 <%= line_chart [
   {name: "工作日", data: @heater_usage_by_hour[0]},
   {name: "周末", data: @heater_usage_by_hour[1]}
-] %>
+], discrete: true %>
 <h2>空调使用情况详情-按小时</h2>
 <%= line_chart [
   {name: "工作日", data: @ecotower_usage_by_hour[0]},
   {name: "周末", data: @ecotower_usage_by_hour[1]}
-] %>
+], discrete: true %>
