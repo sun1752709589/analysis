@@ -1,6 +1,6 @@
 <center>
   <h2>西安万科vv公寓4楼公共区域灯的调控日志(device_ip为40465的Ri信息)</h2>
-  <h2>报告涵盖时间段:<%=@start_time%>~<%=@end_time%>日</h2>
+  <h2>报告涵盖时间段:<%=@start_time%>~<%=(Date.parse(@end_time)-1).to_s%>日</h2>
 </center>
 <h3>1.照明情况汇总-按天</h3>
 <%avg_hour = Tool.second2hour(@everyday_lighting_hour_second.values.sum/@everyday_lighting_hour_second.size)%>

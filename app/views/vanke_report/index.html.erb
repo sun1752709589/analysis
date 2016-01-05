@@ -1,6 +1,6 @@
 <center>
   <h2>西安万科vv公寓智能化数据分析</h2>
-  <h2>报告涵盖时间段:<%=@start_time%>~<%=@end_time%>日</h2>
+  <h2>报告涵盖时间段:<%=@start_time%>~<%=(Date.parse(@end_time)-1).to_s%>日</h2>
 </center>
 <h3>1.使用概况</h3>
 <h4>1.1基础使用数据</h4>
