@@ -1,6 +1,6 @@
 <center>
   <h2>西安万科vv公寓智能化数据分析</h2>
-  <h2>报告涵盖时间段:2015-11-08~2015-12-12日</h2>
+  <h2>报告涵盖时间段:<%=@start_time%>~<%=@end_time%>日</h2>
 </center>
 <h3>1.使用概况</h3>
 <h4>1.1基础使用数据</h4>
@@ -19,7 +19,7 @@
 
 <h3>2.设备使用情况-按日期</h3>
 <h4>&nbsp;&nbsp;2.1热水器使用情况</h4>
-&nbsp;&nbsp;&nbsp;&nbsp;在293个房间中，共有<%=VankeDeviceUsage.where(created_at: Date.parse(@start_time)..Date.parse(@end_time)).where(device_type: 'heater').map(&:device_id).uniq.size%>个房间使用过APP控制热水器。其中，<%=@heater_usage_overview.last[2]%>个房间为高频使用（累计使用10次或10次以上）.该项指标较上一阶段有显著的增长。
+&nbsp;&nbsp;&nbsp;&nbsp;在293个房间中，共有<%=VankeDeviceUsage.where(created_at: Date.parse(@start_time)..Date.parse(@end_time)).where(device_type: 'heater').map(&:device_id).uniq.size%>个房间使用过APP控制热水器。其中，<%=@heater_usage_overview.last[2]%>个房间为高频使用（累计使用10次或10次以上）。
 <center><h4>热水器使用情况概览</h4></center>
 <table class="table table-striped table-nonfluid">
   <tr>
@@ -50,7 +50,7 @@
 <p>在观测的<%=(Date.parse(@end_time)-Date.parse(@start_time)).to_i%>天中，热水器的使用高峰发生在<%=@heater_usage_by_day.sort_by{|k,v| v.to_i}.last.first%>，当天共有<%=@heater_usage_by_day.sort_by{|k,v| v.to_i}.last.last%>个房间通过APP控制了热水器。</p>
 
 <h4>&nbsp;&nbsp;2.2空调使用情况</h4>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;在293个房间中，共有<%=VankeDeviceUsage.where(created_at: Date.parse(@start_time)..Date.parse(@end_time)).where(device_type: 'ecotower').map(&:device_id).uniq.size%>个房间使用过APP控制空调。其中，有<%=@ecotower_usage_overview.last[2]%>个房间为高频使用（累计使用10次或10次以上）。与上一阶段相比，空调的使用率有所下降，推测原因为本阶段的气候适宜，不需要空调进行制冷或制热。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在293个房间中，共有<%=VankeDeviceUsage.where(created_at: Date.parse(@start_time)..Date.parse(@end_time)).where(device_type: 'ecotower').map(&:device_id).uniq.size%>个房间使用过APP控制空调。其中，有<%=@ecotower_usage_overview.last[2]%>个房间为高频使用（累计使用10次或10次以上）。</p>
 <center><h4>空调使用情况概览</h4></center>
 <table class="table table-striped table-nonfluid">
   <tr>
@@ -71,10 +71,10 @@
   <%end%>
 </table>
 <p>
-  通过设备使用趋势图，可以看出：九月底和十月的空调使用率较低；而进入11月后，随着天气变冷，空调的使用率有所增长，并于<%=@ecotower_usage_by_day.sort_by{|k,v| v.to_i}.last.first%>达到该阶段的峰值，当天共有<%=@ecotower_usage_by_day.sort_by{|k,v| v.to_i}.last.last%>个房间通过APP控制了空调。
+  通过设备使用趋势图，可以看出：进入冬季后空调使用显著减少,冬天有暖气,空调基本处于闲置状态.
 </p>
 <h4>&nbsp;&nbsp;2.3门禁使用情况</h4>
-<p>通过APP控制门禁的功能还没有得到有效地推广。在观测的<%=(Date.parse(@end_time)-Date.parse(@start_time)).to_i%>天中，共有两次高峰：9月23日和10月29日。</p>
+<p>通过APP控制门禁的功能还没有得到有效地推广。在观测的<%=(Date.parse(@end_time)-Date.parse(@start_time)).to_i%>天中，高峰出现在<%=@door_accesses_usage_by_day.first.sort_by{|k,v| v.to_i}.last.first%>,当天共有<%=@door_accesses_usage_by_day.first.sort_by{|k,v| v.to_i}.last.last%>条开门记录。</p>
 <center><h4>门禁使用情况详情-按天</h4></center>
 <%= line_chart [
   {name: "开门", data: @door_accesses_usage_by_day[0]},
@@ -83,7 +83,7 @@
 <h3>3.设备使用情况-按时段</h3>
 <h4>&nbsp;&nbsp;3.1热水器使用情况</h4>
 <p>
-通过热水器使用时段图，可以解读出住户的一些日常使用习惯。在早时段，工作日的早高峰位于7点至9点，而周末的早高峰位于9点至11点。在晚时段，使用高峰都位于21点至23点。
+通过热水器使用时段图，可以解读出住户的一些日常使用习惯
 </p>
 <center><h4>热水器使用情况详情-按小时</h4></center>
 <%= line_chart [
@@ -111,7 +111,7 @@
 
 
 
-<center><h4>热水器按使用方式详情</h4></center>
+<!-- <center><h4>热水器按使用方式详情</h4></center>
 <%= line_chart [
   {name: "APP控制", data: @heater_usage_by_control_type[0]},
   {name: "墙面开关控制", data: @heater_usage_by_control_type[1]}
@@ -120,5 +120,5 @@
 <%= line_chart [
   {name: "APP控制", data: @ecotower_usage_by_control_type[0]},
   {name: "墙面开关控制", data: @ecotower_usage_by_control_type[1]}
-], xtitle: "日期", ytitle: "累计操作记录数(次)",discrete: true%>
+], xtitle: "日期", ytitle: "累计操作记录数(次)",discrete: true%> -->
 
