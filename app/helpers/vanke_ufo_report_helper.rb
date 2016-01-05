@@ -10,10 +10,22 @@ module VankeUfoReportHelper
   end
   def get_everyday_hour_linghing_hour(date)
     data = @everyhour_lighting_hour.select{|k,v| k.include?(date)}.inject({}){|hash,(k,v)| hash.merge(k[11..13]+"时"=>v)}
-    [{name: "#{date}照明时长分布(单位:秒)", data: data}]
+    (0..23).each do |i|
+      i = i.to_s
+      i = '0' + i if i.size == 1
+      i = i + '时'
+      data[i] = 0 if data[i].nil?
+    end
+    [{name: "#{date}(#{Tool.num2week(Date.parse(date).wday)})照明时长分布(单位:秒)", data: data.sort.to_h}]
   end
   def get_everyday_hour_linghing_on(date)
     data = @everyhour_lighting_on.select{|k,v| k.include?(date)}.inject({}){|hash,(k,v)| hash.merge(k[11..13]+"时"=>v)}
-    [{name: "#{date}累计开启次数分布(单位:次)", data: data}]
+    (0..23).each do |i|
+      i = i.to_s
+      i = '0' + i if i.size == 1
+      i = i + '时'
+      data[i] = 0 if data[i].nil?
+    end
+    [{name: "#{date}(#{Tool.num2week(Date.parse(date).wday)})累计开启次数分布(单位:次)", data: data.sort.to_h}]
   end
 end
