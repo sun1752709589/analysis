@@ -1,4 +1,4 @@
-# grep -h 40465 receive.log.2015-12-*  >> ./sun_usage_log/vanke_ufo_report.log.2015-12-21
+# grep -h 40465 receive.log.2015-12-*  >> ./sun_usage_log/vanke_ufo_report.log.2015-12-31
 class VaneUFOReport
   # usage:VaneUFOReport.execute('2015-12-01', '2015-12-30', 40465)
   # 得到每次开灯时长
@@ -87,7 +87,7 @@ class VaneUFOReport
         message = data['message']
         next if !message.include?("#{device_ip},Ri")
         created_at = DateTime.iso8601(data['timestamp'])
-        created_at=created_at.change(:offset => "+0800")
+        created_at = created_at.change(:offset => "+0800")
         msg_arr = message.split(',')
         op_code = msg_arr[2]
         instruction = msg_arr[3]
