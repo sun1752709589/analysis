@@ -10,7 +10,7 @@ class VaneUFOReport
       off = Bulb.where({device_ip: device_ip, op_code: 'Ri', care_word: '0'}).where("created_at >= '#{item.created_at}'").order("created_at").first
       next if off.nil?
       if (off.created_at.to_i - item.created_at.to_i) < 60000
-        hash[item.created_at.to_s[0...19]] = off.created_at.to_i - item.created_at.to_i
+        hash[item.created_at.localtime.to_s[0...19]] = off.created_at.to_i - item.created_at.to_i
       end
     end
     hash
@@ -86,8 +86,9 @@ class VaneUFOReport
         data = JSON.parse(line)
         message = data['message']
         next if !message.include?("#{device_ip},Ri")
+
         created_at = DateTime.iso8601(data['timestamp'])
-        created_at = created_at.change(:offset => "+0800")
+        # created_at = created_at.change(:offset => "+0800")
         msg_arr = message.split(',')
         op_code = msg_arr[2]
         instruction = msg_arr[3]
