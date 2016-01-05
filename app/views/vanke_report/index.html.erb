@@ -109,16 +109,16 @@
   {name: "分享权限", data: @door_accesses_usage_by_hour[1]}
 ], discrete: true, xtitle: "小时", ytitle: "累计次数(次)" %>
 
-
-
-<!-- <center><h4>热水器按使用方式详情</h4></center>
+<hr/>
+<h2>热水器&空调控制器按使用方式详情</h2>
+<center><h4>热水器按使用方式详情</h4></center>
 <%= line_chart [
   {name: "APP控制", data: @heater_usage_by_control_type[0]},
   {name: "墙面开关控制", data: @heater_usage_by_control_type[1]}
 ], xtitle: "日期", ytitle: "累计操作记录数(次)",discrete: true %>
-<h2>空调控制器按使用方式详情</h2>
+<center><h4>空调控制器按使用方式详情</h4></center>
 <%= line_chart [
   {name: "APP控制", data: @ecotower_usage_by_control_type[0]},
   {name: "墙面开关控制", data: @ecotower_usage_by_control_type[1]}
-], xtitle: "日期", ytitle: "累计操作记录数(次)",discrete: true%> -->
+], xtitle: "日期", ytitle: "累计操作记录数(次)",discrete: true%>
 
