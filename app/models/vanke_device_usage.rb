@@ -7,13 +7,18 @@ class VankeDeviceUsage < ActiveRecord::Base
     records = VankeDeviceUsage.where(created_at: Date.parse(start_time)..Date.parse(end_time)).where(device_type: device_type)
     records.each do |item|
       tmp = item.created_at.to_s[0..9]
-      if item.mobile_type.include?('Android') || item.mobile_type.include?('iPhone')
+      if item.mobile_type.include?('Android')
         app[tmp] = 0 if app[tmp].nil?
         app[tmp] += 1
       else
         switch[tmp] = 0 if switch[tmp].nil?
         switch[tmp] += 1
       end
+    end
+    (Date.parse(start_time)..(Date.parse(end_time)-1)).each do |x|
+      date = x.to_s
+      app[date] = 0 if app[date].nil?
+      switch[date] = 0 if switch[date].nil?
     end
     [app.sort.to_h, switch.sort.to_h]
   end
@@ -36,6 +41,10 @@ class VankeDeviceUsage < ActiveRecord::Base
     end
     work_day.each{|k,v| work_day[k]=v.size}
     weekend.each{|k,v| weekend[k]=v.size}
+    (0..23).each do |i|
+      work_day[i] = 0 if work_day[i].nil?
+      weekend[i] = 0 if weekend[i].nil?
+    end
     [work_day.sort_by{|k,v| k.to_i}.to_h,weekend.sort_by{|k,v| k.to_i}.to_h]
   end
 
@@ -77,6 +86,11 @@ class VankeDeviceUsage < ActiveRecord::Base
         door_share[tmp] += 1
       end
     end
+    (Date.parse(start_time)..(Date.parse(end_time)-1)).each do |x|
+      date = x.to_s
+      door_open[date] = 0 if door_open[date].nil?
+      door_share[date] = 0 if door_share[date].nil?
+    end
     [door_open.sort.to_h, door_share.sort.to_h]
   end
 
@@ -110,8 +124,9 @@ class VankeDeviceUsage < ActiveRecord::Base
     [a,b,c]
   end
 
-  # zgrep switch_o access.log.[1-5].gz >> vanke_heater.log.2015-12-14
-  # VankeDeviceUsage.fetch_heater_data('2015-12-01', '2015-12-30')
+  # zgrep switch_o access.log.[2-5].gz >> /home/deployer/nginx_access_log/vanke_heater.log.2015-12-31
+  # grep switch_o access.log access.log.1 >> /home/deployer/nginx_access_log/vanke_heater.log.2015-12-31
+  # VankeDeviceUsage.fetch_heater_data('2015-12-30', '2015-12-31')
   def self.fetch_heater_data(start_time, end_time, vanke_only = true)
     vanke_heater_ids = VankeDeviceHouseTable.where("device_type='heater'").map(&:device_id)
     files = Tool.find_files("/Users/phantom/temp/vakan_ufo_report", "vanke_heater.log.*", start_time, end_time)
@@ -119,6 +134,7 @@ class VankeDeviceUsage < ActiveRecord::Base
     files.each do |file_path|
       IO.foreach(file_path) do |line|
         begin
+          # binding.pry
           next if line.size < 10 || line.include?('/api/api_v1')
           time = /\[.*\]/.match(line)[0][1...-1].sub(/:/, " ").to_datetime
           device_id = /bulbs\/\d+/.match(line)[0].split('/')[1]
@@ -141,8 +157,9 @@ class VankeDeviceUsage < ActiveRecord::Base
     ErrorCount.create({error_type: 'error',error_count: error_count,file_path: nil,key_word: 'heater',created_at: Time.now})
     "总错误数:#{error_count}"
   end
-  # zgrep vanke_eco_towers access.log.[1-5].gz >> vanke_ecotower.log.2015-12-08
-  # VankeDeviceUsage.fetch_ecotower_data('2015-12-01', '2015-12-30')
+  # zgrep vanke_eco_towers access.log.[2-5].gz >> /home/deployer/nginx_access_log/vanke_ecotower.log.2015-12-31
+  # zgrep vanke_eco_towers access.log access.log.1 >> /home/deployer/nginx_access_log/vanke_ecotower.log.2015-12-31
+  # VankeDeviceUsage.fetch_ecotower_data('2015-12-30', '2015-12-31')
   def self.fetch_ecotower_data(start_time, end_time, vanke_only = true)
     vanke_ecotower_ids = VankeDeviceHouseTable.where("device_type='ecotower'").map(&:device_id)
     files = Tool.find_files("/Users/phantom/temp/vakan_ufo_report", "vanke_ecotower.log.*", start_time, end_time)
@@ -172,8 +189,9 @@ class VankeDeviceUsage < ActiveRecord::Base
     ErrorCount.create({error_type: 'error',error_count: error_count,file_path: nil,key_word: 'ecotower',created_at: Time.now})
     "总错误数:#{error_count}"
   end
-  # zgrep door_accesses access.log.[1-5].gz >> vanke_dooraccesses.log.2015-12-09
-  # VankeDeviceUsage.fetch_dooraccesses_data('2015-12-01', '2015-12-30')
+  # zgrep door_accesses access.log.[2-5].gz >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2015-12-31
+  # zgrep door_accesses access.log access.log.1 >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2015-12-31
+  # VankeDeviceUsage.fetch_dooraccesses_data('2015-12-30', '2015-12-31')
   def self.fetch_dooraccesses_data(start_time, end_time, vanke_only = true)
     vanke_dooraccesses_ids = VankeDeviceHouseTable.where("device_type='dooraccesses'").map(&:device_id)
     files = Tool.find_files("/Users/phantom/temp/vakan_ufo_report", "vanke_dooraccesses.log.*", start_time, end_time)

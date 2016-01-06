@@ -42,7 +42,7 @@
 <p>
   通过设备使用趋势图，可以看出热水器的使用房间数在波动中有增长的趋势，这说明了住户正在逐步养成通过APP控制热水器的日常使用习惯。
 </p>
-<center><h4>热水器使用情况详情</h4></center>
+<center><h4>热水器&空调控制器使用情况详情-按天</h4></center>
 <%= line_chart [
   {name: "热水器", data: @heater_usage_by_day},
   {name: "空调控制器", data: @ecotower_usage_by_day}
@@ -110,15 +110,15 @@
 ], discrete: true, xtitle: "小时", ytitle: "累计次数(次)" %>
 
 <hr/>
-<h2>热水器&空调控制器按使用方式详情</h2>
-<center><h4>热水器按使用方式详情</h4></center>
+<h2>热水器&空调控制器按客户端使用详情</h2>
+<center><h4>热水器按客户端使用详情</h4></center>
 <%= line_chart [
-  {name: "APP控制", data: @heater_usage_by_control_type[0]},
-  {name: "墙面开关控制", data: @heater_usage_by_control_type[1]}
+  {name: "Android客户端", data: @heater_usage_by_control_type[0]},
+  {name: "iPhone客户端", data: @heater_usage_by_control_type[1]}
 ], xtitle: "日期", ytitle: "累计操作记录数(次)",discrete: true %>
-<center><h4>空调控制器按使用方式详情</h4></center>
+<center><h4>空调控制器按客户端使用详情</h4></center>
 <%= line_chart [
-  {name: "APP控制", data: @ecotower_usage_by_control_type[0]},
-  {name: "墙面开关控制", data: @ecotower_usage_by_control_type[1]}
+  {name: "Android客户端", data: @ecotower_usage_by_control_type[0]},
+  {name: "iPhone客户端", data: @ecotower_usage_by_control_type[1]}
 ], xtitle: "日期", ytitle: "累计操作记录数(次)",discrete: true%>
 
