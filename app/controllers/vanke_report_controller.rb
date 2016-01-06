@@ -1,6 +1,6 @@
 class VankeReportController < ApplicationController
   def index
-    @start_time = '2015-12-20'
+    @start_time = '2015-12-06'
     @end_time = '2015-12-31'
     @heater_usage_overview = VankeDeviceUsage.device_usage_overview('heater',@start_time,@end_time)
     @ecotower_usage_overview = VankeDeviceUsage.device_usage_overview('ecotower',@start_time,@end_time)

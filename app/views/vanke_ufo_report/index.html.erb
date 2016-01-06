@@ -5,11 +5,13 @@
 <h3>1.照明情况汇总-按天</h3>
 <%avg_hour = Tool.second2hour(@everyday_lighting_hour_second.values.sum/@everyday_lighting_hour_second.size)%>
 <h4>&nbsp;&nbsp;下图汇总了每天累计照明时间，平均照明时长约为<%=avg_hour%>/天，开灯时长和关灯时长之比约为1:<%=((24-avg_hour.to_f)/avg_hour.to_f).round(2)%>。</h4>
+<br/>
 <center><h4>每天累计照明时间</h4></center>
 <%= column_chart get_everyday_lighting_hour_data%>
 <h4><p>
 下表细分了每天累计照明时间，统计了开启次数和每次开启的平均时长。平均来说，灯每天会开启约<%="#{(@everyday_lighting_on.values.sum/@everyday_lighting_on.size).round(0)}次"%>，每次平均时长约<%="#{(@everyday_lighting_hour_second.values.sum/@everyday_lighting_on.values.sum).round(0)}秒"%>。
 </p></h4>
+<br/>
 <center><h4>每天累计开启次数和每次平均照明时长</h4></center>
 <table class="table table-striped table-nonfluid">
   <tr>
@@ -42,16 +44,20 @@
 通过下图按小时统计的累计照明时间，可以看出：
 在凌晨至清晨时段，若无人经过，灯不会亮起，发挥了很好的节电作用；
 </p>
+<br/>
 <center><h4>每天累计照明时长-按小时</h4></center>
 <%@everyday_lighting_on.each do |k,v|%>
   <%= column_chart get_everyday_hour_linghing_hour(k)%>
+  <br/>
 <%end%>
 
 <hr/>
 <p>下图细分了每小时累计开启次数。</p>
+<br/>
 <center><h4>每天累计开启次数-按小时</h4></center>
 <%@everyday_lighting_on.each do |k,v|%>
   <%= column_chart get_everyday_hour_linghing_on(k)%>
+  <br/>
 <%end%>
 <p>
   可以看出在高峰期时，每小时约开启15次，体现了照明系统的灵活性。
@@ -59,6 +65,7 @@
   从每次开启的时长来看，通常约为30秒，既可以保证用户完全通过走廊，又起到了节电的效果。
 </p>
 <p>照明时间最长的20次明细信息</p>
+<br/>
 <center><h4>照明时间最长的20次明细信息</h4></center>
 <table class="table table-striped table-nonfluid">
   <tr>
