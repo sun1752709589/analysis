@@ -28,16 +28,14 @@ class Recipe < ActiveRecord::Base
         result[recipe.title][date] += 1
       end
     end
-    result.each do |k,v|
-      v.each do |kk,vv|
-        result[k].delete(kk) if vv == 0
-      end
-    end
     (Date.parse(start_time)..Date.parse(end_time)).each do |item|
       tmp = item.to_s
       Recipe.all.each do |recipe|
         result[recipe.title][tmp] = 0 if result[recipe.title][tmp].nil?
       end
+    end
+    result.each do |k,v|
+      result[k] = v.sort
     end
     result
   end
