@@ -44,8 +44,8 @@ class Recipe < ActiveRecord::Base
     result = {}
     UserRecipe.all.each do |item|
       user = User.find(item.user_id)
-      result["#{user.email}-#{user.name}"] = [] if result["#{user.email}-#{user.name}"].nil?
-      result["#{user.email}-#{user.name}"] << Recipe.find(item.recipe_id).try(:title)
+      result[user.id] = [] if result[user.id].nil?
+      result[user.id] << Recipe.find(item.recipe_id).try(:title)
     end
     result.sort_by{|k,v| 9 - v.size}
   end

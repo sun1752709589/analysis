@@ -36,7 +36,7 @@
   </tr>
   <%end%>
   <tr>
-    <td>均值</td>
+    <td>总数</td>
     <td><%=@recipe_overview.values.map{|x| x[0]}.sum%></td>
     <td><%=@recipe_overview.values.map{|x| x[1]}.sum%></td>
     <td><%=@recipe_overview.values.map{|x| x[2]}.sum%></td>
@@ -52,8 +52,11 @@
 <center><h4>用户的应用配置详情</h4></center>
 <table class="table table-striped table-nonfluid">
   <tr>
+    <td>用户id</td>
     <td>用户email</td>
     <td>用户名</td>
+    <td>用户创建日期</td>
+    <td>幻腾小伙伴?</td>
     <td>总数</td>
     <td>灯光唤醒</td>
     <td>睡眠灯</td>
@@ -69,8 +72,12 @@
     @user_recipes.each do |k,v|
   %>
   <tr>
-    <td><%=k.split('-')[0]%></td>
-    <td><%=k.split('-')[1]%></td>
+    <%user = User.find(k)%>
+    <td><%=user.id%></td>
+    <td><%=user.email%></td>
+    <td><%=user.name%></td>
+    <td><%=user.created_at.to_s[0..9]%></td>
+    <td><%=user.admin ? '💪' : '❌'%></td>
     <td><%=v.size%></td>
     <td><%=v.include?('灯光唤醒') ? 1 : 0%></td>
     <td><%=v.include?('睡眠灯') ? 1 : 0%></td>
