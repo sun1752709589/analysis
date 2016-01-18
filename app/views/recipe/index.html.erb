@@ -37,9 +37,9 @@
   <%end%>
   <tr>
     <td>总数</td>
-    <td><%=@recipe_overview.values.map{|x| x[0]}.sum%></td>
-    <td><%=@recipe_overview.values.map{|x| x[1]}.sum%></td>
-    <td><%=@recipe_overview.values.map{|x| x[2]}.sum%></td>
+    <td><%=UserRecipe.all.map(&:user_id).uniq.size%></td>
+    <td><%=UserRecipe.where(favorite: true).map(&:user_id).uniq.size%></td>
+    <td><%=UserRecipe.where(favorite: true).where(activate: true).map(&:user_id).uniq.size%></td>
   </tr>
 </table>
 
