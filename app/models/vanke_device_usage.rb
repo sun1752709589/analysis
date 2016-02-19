@@ -124,8 +124,8 @@ class VankeDeviceUsage < ActiveRecord::Base
     [a,b,c]
   end
 
-  # zgrep switch_o access.log.[2-5].gz >> /home/deployer/nginx_access_log/vanke_heater.log.2015-12-31
-  # grep switch_o access.log access.log.1 >> /home/deployer/nginx_access_log/vanke_heater.log.2015-12-31
+  # zgrep --no-filename switch_o access.log.[2-5].gz >> /home/deployer/nginx_access_log/vanke_heater.log.2015-12-31
+  # grep --no-filename switch_o access.log access.log.1 >> /home/deployer/nginx_access_log/vanke_heater.log.2015-12-31
   # VankeDeviceUsage.fetch_heater_data('2015-12-30', '2015-12-31')
   def self.fetch_heater_data(start_time, end_time, vanke_only = true)
     vanke_heater_ids = VankeDeviceHouseTable.where("device_type='heater'").map(&:device_id)
@@ -157,8 +157,8 @@ class VankeDeviceUsage < ActiveRecord::Base
     ErrorCount.create({error_type: 'error',error_count: error_count,file_path: nil,key_word: 'heater',created_at: Time.now})
     "总错误数:#{error_count}"
   end
-  # zgrep vanke_eco_towers access.log.[2-5].gz >> /home/deployer/nginx_access_log/vanke_ecotower.log.2015-12-31
-  # zgrep vanke_eco_towers access.log access.log.1 >> /home/deployer/nginx_access_log/vanke_ecotower.log.2015-12-31
+  # zgrep --no-filename vanke_eco_towers access.log.[2-5].gz >> /home/deployer/nginx_access_log/vanke_ecotower.log.2015-12-31
+  # zgrep --no-filename vanke_eco_towers access.log access.log.1 >> /home/deployer/nginx_access_log/vanke_ecotower.log.2015-12-31
   # VankeDeviceUsage.fetch_ecotower_data('2015-12-30', '2015-12-31')
   def self.fetch_ecotower_data(start_time, end_time, vanke_only = true)
     vanke_ecotower_ids = VankeDeviceHouseTable.where("device_type='ecotower'").map(&:device_id)
@@ -189,8 +189,8 @@ class VankeDeviceUsage < ActiveRecord::Base
     ErrorCount.create({error_type: 'error',error_count: error_count,file_path: nil,key_word: 'ecotower',created_at: Time.now})
     "总错误数:#{error_count}"
   end
-  # zgrep door_accesses access.log.[2-5].gz >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2015-12-31
-  # zgrep door_accesses access.log access.log.1 >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2015-12-31
+  # zgrep --no-filename door_accesses access.log.[2-5].gz >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2015-12-31
+  # zgrep --no-filename door_accesses access.log access.log.1 >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2015-12-31
   # VankeDeviceUsage.fetch_dooraccesses_data('2015-12-30', '2015-12-31')
   def self.fetch_dooraccesses_data(start_time, end_time, vanke_only = true)
     vanke_dooraccesses_ids = VankeDeviceHouseTable.where("device_type='dooraccesses'").map(&:device_id)

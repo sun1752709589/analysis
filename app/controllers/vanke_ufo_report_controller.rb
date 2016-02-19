@@ -1,7 +1,7 @@
 class VankeUfoReportController < ApplicationController
   def index
-    @start_time = '2015-12-06'
-    @end_time = '2015-12-31'
+    @start_time = '2016-01-01'
+    @end_time = '2016-02-01'
     @hash = VaneUFOReport.get_by_hash(@start_time, @end_time, 40465)
     @everyday_lighting_hour = VaneUFOReport.per_day_lighting_hour(@hash)
     @everyday_lighting_hour_second = VaneUFOReport.per_day_lighting_hour(@hash, true)

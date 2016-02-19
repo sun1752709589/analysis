@@ -1,4 +1,5 @@
 # grep -h 40465 receive.log.2015-12-*  >> ./sun_usage_log/vanke_ufo_report.log.2015-12-31
+# zgrep --no-filename 40465 receive.log.2016-01-* >> ../sun_usage_log/vanke_ufo_report.log.2016-01-31
 class VaneUFOReport
   # usage:VaneUFOReport.execute('2015-12-01', '2015-12-30', 40465)
   # 得到每次开灯时长
@@ -9,7 +10,7 @@ class VaneUFOReport
       next if item.created_at.nil?
       off = Bulb.where({device_ip: device_ip, op_code: 'Ri', care_word: '0'}).where("created_at >= '#{item.created_at}'").order("created_at").first
       next if off.nil?
-      if (off.created_at.to_i - item.created_at.to_i) < 60000
+      if (off.created_at.to_i - item.created_at.to_i) < 600000
         hash[item.created_at.to_s[0...19]] = off.created_at.to_i - item.created_at.to_i
       end
     end
@@ -17,10 +18,10 @@ class VaneUFOReport
   end
 
   def self.execute(start_time, end_time, device_ip)
-    logs = Tool.find_files("/Users/phantom/temp/vakan_ufo_report/receive_log", "vanke_ufo_report.log.*", start_time, end_time)
-    logs.each do |item|
-      fetch(item, device_ip)
-    end
+    # logs = Tool.find_files("/Users/phantom/temp/vakan_ufo_report/receive_log", "vanke_ufo_report.log.*", start_time, end_time)
+    # logs.each do |item|
+    #   fetch(item, device_ip)
+    # end
     hash = get_by_hash(start_time, end_time, device_ip)
     # draw_chart(hash)
     hash
