@@ -1,5 +1,5 @@
 # grep -h 40465 receive.log.2015-12-*  >> ./sun_usage_log/vanke_ufo_report.log.2015-12-31
-# zgrep --no-filename 40465 receive.log.2016-01-* >> ../sun_usage_log/vanke_ufo_report.log.2016-01-31
+# zgrep --no-filename 40465 receive.log.2016-02-* >> ./sun_usage_log/vanke_ufo_report.log.2016-02-29
 class VaneUFOReport
   # usage:VaneUFOReport.execute('2015-12-01', '2015-12-30', 40465)
   # 得到每次开灯时长
@@ -10,7 +10,7 @@ class VaneUFOReport
       next if item.created_at.nil?
       off = Bulb.where({device_ip: device_ip, op_code: 'Ri', care_word: '0'}).where("created_at >= '#{item.created_at}'").order("created_at").first
       next if off.nil?
-      if (off.created_at.to_i - item.created_at.to_i) < 600000
+      if (off.created_at.to_i - item.created_at.to_i) < 1000000000
         hash[item.created_at.to_s[0...19]] = off.created_at.to_i - item.created_at.to_i
       end
     end
