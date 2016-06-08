@@ -1,7 +1,7 @@
 # grep -h 40465 receive.log.2015-12-*  >> ./sun_usage_log/vanke_ufo_report.log.2015-12-31
-# zgrep --no-filename 40465 receive.log.2016-04-* >> ./sun_usage_log/vanke_ufo_report.log.2016-04-30
+# zgrep --no-filename 40465 receive.log.2016-05-* >> ./sun_usage_log/vanke_ufo_report.log.2016-05-31
 class VaneUFOReport
-  # usage:VaneUFOReport.execute('2015-12-01', '2015-12-30', 40465)
+  # usage:VaneUFOReport.execute('2016-05-01', '2016-05-31', 40465)
   # 得到每次开灯时长
   def self.get_by_hash(start_time, end_time, device_ip)
     hash = {}
