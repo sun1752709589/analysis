@@ -1,5 +1,5 @@
-# grep -h 40465 receive.log.2015-12-*  >> ./sun_usage_log/vanke_ufo_report.log.2015-12-31
-# zgrep --no-filename 40465 receive.log.2016-07-* >> /home/deployer/sun_vanke_log/vanke_ufo_report.log.2016-07-31
+# grep -h 40303 receive.log.2015-12-*  >> ./sun_usage_log/vanke_ufo_report.log.2015-12-31
+# zgrep --no-filename 40303 receive.log.2016-08-* >> /home/deployer/sun_vanke_log/vanke_ufo_report.log.2016-08-31
 class VaneUFOReport
   # usage:VaneUFOReport.execute('2016-07-01', '2016-07-31', 40465)
   # 得到每次开灯时长
