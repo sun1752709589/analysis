@@ -1,8 +1,8 @@
 class VankeDeviceUsage < ActiveRecord::Base
 # scp -l 300 deployer@www.huantengsmart.com:/home/deployer/nginx_access_log/vanke_heater.log.2016-03-31 /Users/phantom/temp/vakan_ufo_report/vanke_heater.log.2016-03-31
-# 内网 scp -p 12221 deployer@10.132.7.167:/home/deployer/nginx_access_log/vanke_heater.log.2016-10-31 /home/deployer/sun_vanke_log/
-# 内网 scp -p 12221 deployer@10.132.7.167:/home/deployer/nginx_access_log/vanke_ecotower.log.2016-10-31 /home/deployer/sun_vanke_log/
-# 内网 scp -p 12221 deployer@10.132.7.167:/home/deployer/nginx_access_log/vanke_dooraccesses.log.2016-10-31 /home/deployer/sun_vanke_log/
+# 内网 scp -p 12221 deployer@10.132.7.167:/home/deployer/nginx_access_log/vanke_heater.log.2017-02-28 /home/deployer/sun_vanke_log/
+# 内网 scp -p 12221 deployer@10.132.7.167:/home/deployer/nginx_access_log/vanke_ecotower.log.2017-02-28 /home/deployer/sun_vanke_log/
+# 内网 scp -p 12221 deployer@10.132.7.167:/home/deployer/nginx_access_log/vanke_dooraccesses.log.2017-02-28 /home/deployer/sun_vanke_log/
   # app控制和墙面开关控制热水器
   def self.device_usage_through_app_switch(device_type, start_time, end_time)
     app = {}
@@ -131,11 +131,11 @@ class VankeDeviceUsage < ActiveRecord::Base
     [a,b,c]
   end
 
-  # zgrep --no-filename switch_o access.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_heater.log.2016-10-31
-  # zgrep --no-filename switch_o access_cn.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_heater.log.2016-10-31
-  # zgrep --no-filename switch_o access_ssl.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_heater.log.2016-10-31
-  # grep --no-filename switch_o access.log access.log.1 access_ssl.log access_ssl.log.1 access_cn.log access_cn.log.1 >> /home/deployer/nginx_access_log/vanke_heater.log.2016-10-31
-  # VankeDeviceUsage.fetch_heater_data('2016-10-1', '2016-10-31')
+  # zgrep --no-filename switch_o access.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_heater.log.2017-02-28
+  # zgrep --no-filename switch_o access_cn.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_heater.log.2017-02-28
+  # zgrep --no-filename switch_o access_ssl.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_heater.log.2017-02-28
+  # grep --no-filename switch_o access.log access.log.1 access_ssl.log access_ssl.log.1 access_cn.log access_cn.log.1 >> /home/deployer/nginx_access_log/vanke_heater.log.2017-02-28
+  # VankeDeviceUsage.fetch_heater_data('2017-02-01', '2017-02-28')
   def self.fetch_heater_data(start_time, end_time, vanke_only = true)
     vanke_heater_ids = VankeDeviceHouseTable.where("device_type='heater'").map(&:device_id)
     files = Tool.find_files("/Users/phantom/temp/vakan_ufo_report", "vanke_heater.log.*", start_time, end_time)
@@ -166,11 +166,11 @@ class VankeDeviceUsage < ActiveRecord::Base
     ErrorCount.create({error_type: 'error',error_count: error_count,file_path: nil,key_word: 'heater',created_at: Time.now})
     "总错误数:#{error_count}"
   end
-  # zgrep --no-filename vanke_eco_towers access.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_ecotower.log.2016-10-31
-  # zgrep --no-filename vanke_eco_towers access_cn.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_ecotower.log.2016-10-31
-  # zgrep --no-filename vanke_eco_towers access_ssl.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_ecotower.log.2016-10-31
-  # zgrep --no-filename vanke_eco_towers access.log access.log.1 access_ssl.log access_ssl.log.1 access_cn.log access_cn.log.1 >> /home/deployer/nginx_access_log/vanke_ecotower.log.2016-10-31
-  # VankeDeviceUsage.fetch_ecotower_data('2016-10-1', '2016-10-31')
+  # zgrep --no-filename vanke_eco_towers access.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_ecotower.log.2017-02-28
+  # zgrep --no-filename vanke_eco_towers access_cn.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_ecotower.log.2017-02-28
+  # zgrep --no-filename vanke_eco_towers access_ssl.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_ecotower.log.2017-02-28
+  # zgrep --no-filename vanke_eco_towers access.log access.log.1 access_ssl.log access_ssl.log.1 access_cn.log access_cn.log.1 >> /home/deployer/nginx_access_log/vanke_ecotower.log.2017-02-28
+  # VankeDeviceUsage.fetch_ecotower_data('2017-02-01', '2017-02-28')
   def self.fetch_ecotower_data(start_time, end_time, vanke_only = true)
     vanke_ecotower_ids = VankeDeviceHouseTable.where("device_type='ecotower'").map(&:device_id)
     files = Tool.find_files("/Users/phantom/temp/vakan_ufo_report", "vanke_ecotower.log.*", start_time, end_time)
@@ -200,11 +200,11 @@ class VankeDeviceUsage < ActiveRecord::Base
     ErrorCount.create({error_type: 'error',error_count: error_count,file_path: nil,key_word: 'ecotower',created_at: Time.now})
     "总错误数:#{error_count}"
   end
-  # zgrep --no-filename door_accesses access.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2016-10-31
-  # zgrep --no-filename door_accesses access_cn.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2016-10-31
-  # zgrep --no-filename door_accesses access_ssl.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2016-10-31
-  # zgrep --no-filename door_accesses access.log access.log.1 access_ssl.log access_ssl.log.1 access_cn.log access_cn.log.1 >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2016-10-31
-  # VankeDeviceUsage.fetch_dooraccesses_data('2016-10-1', '2016-10-31')
+  # zgrep --no-filename door_accesses access.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2017-02-28
+  # zgrep --no-filename door_accesses access_cn.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2017-02-28
+  # zgrep --no-filename door_accesses access_ssl.log.[2-6].gz >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2017-02-28
+  # zgrep --no-filename door_accesses access.log access.log.1 access_ssl.log access_ssl.log.1 access_cn.log access_cn.log.1 >> /home/deployer/nginx_access_log/vanke_dooraccesses.log.2017-02-28
+  # VankeDeviceUsage.fetch_dooraccesses_data('2017-02-1', '2017-02-28')
   def self.fetch_dooraccesses_data(start_time, end_time, vanke_only = true)
     vanke_dooraccesses_ids = VankeDeviceHouseTable.where("device_type='dooraccesses'").map(&:device_id)
     files = Tool.find_files("/Users/phantom/temp/vakan_ufo_report", "vanke_dooraccesses.log.*", start_time, end_time)
